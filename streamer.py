@@ -3,7 +3,6 @@ import time
 from sklearn.decomposition import PCA
 import numpy as np
 
-
 class StreamerPlot:
 
     def on_start(self, data, border_function=None):
@@ -54,7 +53,6 @@ class StreamPCA:
 
     def on_receive(self, data, y_pred):
         pca_data = self.transform_pca.fit_transform(data)
-        y_pred1 = self.pca_model.predict(pca_data)
         for idx in range(0, len(pca_data)):
             self.plot.on_receive(pca_data[idx], y_pred[idx])
         self.plot.on_finishing()
@@ -74,24 +72,32 @@ class Streamer:
     def __init__(self, data):
         self.data = data
 
-    def run(self, data_stream):
+    def run(self, data_stream, window_size=.1, slide=.05):
         self.on_start(self.data)
-        for d in data_stream:
-            self.on_receive(d)
+        self.data_stream = data_stream
+        absolute_size = int(len(data_stream) * window_size)
+        absolute_slide = int(absolute_size * slide)
+        initial_index = 0
+        final_index = absolute_size
+        while final_index <= len(data_stream):
+            if len(data_stream) <= final_index + absolute_slide:
+                final_index = len(data_stream)
+            windows = data_stream[initial_index:final_index]
+            self.on_receive(windows, initial_index, final_index)
+            initial_index += absolute_slide
+            final_index += absolute_slide
         self.on_finish()
 
 
 class OutlierStream(Streamer):
 
-    def __init__(self, data):
+    def __init__(self, data, data_stream):
         Streamer.__init__(self, data)
-        self.predictions = []
-        self.data_stream = []
+        self.predictions = np.zeros(len(data_stream))
 
-    def on_receive(self, data):
+    def on_receive(self, data, initial_index, final_index):
         y_pred = self.predict_model(data)
-        self.predictions.append(y_pred)
-        self.data_stream.append(data)
+        self.predictions[initial_index:final_index] += y_pred
         self.update_model(data)
 
     def on_finish(self):
