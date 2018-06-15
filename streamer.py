@@ -82,8 +82,8 @@ class Streamer:
         while final_index <= len(data_stream):
             if len(data_stream) <= final_index + absolute_slide:
                 final_index = len(data_stream)
-            windows = data_stream[initial_index:final_index]
-            self.on_receive(windows, initial_index, final_index)
+            window = data_stream[initial_index:final_index]
+            self.on_receive(window, initial_index, final_index)
             initial_index += absolute_slide
             final_index += absolute_slide
         self.on_finish()
@@ -91,17 +91,21 @@ class Streamer:
 
 class OutlierStream(Streamer):
 
-    def __init__(self, data, data_stream):
-        Streamer.__init__(self, data)
-        self.predictions = np.zeros(len(data_stream))
+    def __init__(self, inliers, outliers):
+        self.ground_truth = []
+        [self.ground_truth.append(1) for outlier in outliers]
+        [self.ground_truth.append(0) for inline in inliers]
+        data_total = np.concatenate((inliers, outliers), axis=0)
+        Streamer.__init__(self, data_total)
+        self.predictions = np.zeros(len(data_total))
 
-    def on_receive(self, data, initial_index, final_index):
-        y_pred = self.predict_model(data)
+    def on_receive(self, data_window, initial_index, final_index):
+        y_pred = self.predict_model(data_window)
         self.predictions[initial_index:final_index] += y_pred
-        self.update_model(data)
+        self.update_model(data_window)
 
     def on_finish(self):
-        self.summary(self.predictions, self.data_stream)
+        self.summary(self.ground_truth, self.predictions)
 
     def on_start(self, data):
         self.train_model(data)
@@ -115,7 +119,7 @@ class OutlierStream(Streamer):
     def predict_model(self, data):
         raise NotImplementedError("Please Implement this method")
 
-    def summary(self, predictions, data_stream):
+    def summary(self, predictions):
         raise NotImplementedError("Please Implement this method")
 
 
