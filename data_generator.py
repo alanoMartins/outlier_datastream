@@ -29,13 +29,13 @@ class DataGenerator:
         pass
 
     def gauss(self):
-        number_inlier = 1000
-        number_outlier = 10
+        number_inlier = 10000
+        number_outlier = 100
         offset = 10
 
         np.random.seed(42)
-        data_1 = 0.3 * np.random.randn(number_inlier // 2, 2) - offset
-        data_2 = 0.3 * np.random.randn(number_inlier // 2, 2) + offset
+        data_1 = 10 * np.random.randn(number_inlier // 2, 2) - offset
+        data_2 = 10 * np.random.randn(number_inlier // 2, 2) + offset
         inliers = np.r_[data_1, data_2]
-        outliers = np.random.uniform(low=-6, high=6, size=(number_outlier, 2))
+        outliers = np.random.uniform(low=-100, high=100, size=(number_outlier, 2))
         return inliers, outliers

@@ -10,5 +10,5 @@ inliers, outliers = data_gen.generate()
 # cl2_2 = inliers[idx:]
 
 
-stream = EllipticEnvelopeOutlierStream(inliers, outliers)
-stream.run(outliers)
+stream = AngularBasedOutlier(inliers, outliers)
+stream.run(outliers, window_size=.4, slide=.3)
