@@ -71,8 +71,10 @@ class Streamer:
 
     def __init__(self, data):
         self.data = data
+        self.stats = {}
 
     def run(self, data_stream, window_size=.1, slide=.05):
+        start = time.time()
         self.on_start(self.data)
         self.data_stream = data_stream
         absolute_size = int(len(data_stream) * window_size)
@@ -86,7 +88,9 @@ class Streamer:
             self.on_receive(window, initial_index, final_index)
             initial_index += absolute_slide
             final_index += absolute_slide
+        end = time.time()
         self.on_finish()
+        self.stats["time"] = end - start
 
 
 class OutlierStream(Streamer):

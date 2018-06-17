@@ -11,26 +11,28 @@ class DataGenerator:
             return self.florest_Cover()
         elif self.dataset == 2:
             return self.gauss()
+        elif self.dataset == 3:
+            return self.tao()
         else:
             raise AttributeError("Choose a valid dataset!")
 
     def florest_Cover(self):
         path = "dataset/covtypeNorm.csv"
-        data = pd.read_csv(path, header=None).iloc[:, :]
+        data = pd.read_csv(path, header=None).iloc[:50000, :]
         cl2 = data.loc[data[54] == 2]
         cl4 = data.loc[data[54] == 4]
         cl2.drop(cl2.columns[54], axis=1, inplace=True)
         cl4.drop(cl4.columns[54], axis=1, inplace=True)
         inliers = cl2
         outliers = cl4
-        return inliers, outliers
+        return inliers.values, outliers.values
 
     def tao(self):
         number_outlier = 10
         path = "dataset/tao.csv"
-        data = pd.read_csv(path, header=None).iloc[:, :]
+        data = pd.read_csv(path, header=None).iloc[:2000, :]
         outliers = np.random.uniform(low=-60, high=60, size=(number_outlier, 4))
-        return data, outliers
+        return data.values, outliers
 
     def gauss(self):
         number_inlier = 10000

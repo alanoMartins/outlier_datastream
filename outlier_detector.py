@@ -2,7 +2,7 @@ from streamer import OutlierStream
 from pyod.models.abod import ABOD
 from pyod.models.knn import KNN
 import numpy as np
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 from scipy import stats
 
@@ -17,7 +17,7 @@ class AngularBasedOutlier(OutlierStream):
 
         OutlierStream.__init__(self, inliers, outliers)
         #self.model = KNN(contamination=0.045)
-        self.model = ABOD(n_neighbors=40, contamination=0.045)
+        self.model = ABOD(n_neighbors=20, contamination=0.045)
 
     def train_model(self, data):
         self.model.fit(data)
@@ -30,11 +30,20 @@ class AngularBasedOutlier(OutlierStream):
     def predict_model(self, data):
         return self.model.predict(data)
 
-    def summary(self, ground_truth, predictions):
+    def summary(self, ground_truth, predictions, is_plot=False):
 
         predictions = list(map(lambda x: 1 if x > 0 else 0, predictions))
 
         print(confusion_matrix(predictions, ground_truth))
+        print("Acuracia: {}".format(accuracy_score(predictions, ground_truth)))
+        print("Precision: {}".format(precision_score(predictions, ground_truth)))
+        print("Recall: {}".format(recall_score(predictions, ground_truth)))
+        print("F1: {}".format(f1_score(predictions, ground_truth)))
+
+        if is_plot:
+            self._plot()
+
+    def _plot(self):
 
         xx, yy = np.meshgrid(np.linspace(-70, 70, 100), np.linspace(-70, 70, 100))
         Z = self.model.decision_function(np.c_[xx.ravel(), yy.ravel()]) * -1
