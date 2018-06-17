@@ -11,17 +11,10 @@ class EllipticEnvelopeOutlierStream(OutlierStream):
     def __init__(self, data, data_stream):
         OutlierStream.__init__(self, data, data_stream)
         self.model = EllipticEnvelope(contamination=0.045)
-        # self.model = IsolationForest(max_samples=int(len(data)*.8),
-        #                                 contamination=0.045,
-        #                                 random_state=42, n_jobs=-1)
-        #self.model = svm.OneClassSVM(nu=0.95 * 0.25 + 0.05, kernel="rbf", gamma=0.1)
         self.DEBUG = False
         self.pca_plot = StreamPCA()
 
     def train_model(self, data):
-        # if self.DEBUG:
-        #     # Using only for a visualize
-        #     self.pca_plot.on_start(data, EllipticEnvelope(contamination=0.26))
         self.model.fit(data)
 
     def update_model(self, data):

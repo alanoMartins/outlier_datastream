@@ -26,16 +26,20 @@ class DataGenerator:
         return inliers, outliers
 
     def tao(self):
-        pass
+        number_outlier = 10
+        path = "dataset/tao.csv"
+        data = pd.read_csv(path, header=None).iloc[:, :]
+        outliers = np.random.uniform(low=-60, high=60, size=(number_outlier, 4))
+        return data, outliers
 
     def gauss(self):
         number_inlier = 10000
-        number_outlier = 100
+        number_outlier = 10
         offset = 10
 
         np.random.seed(42)
         data_1 = 10 * np.random.randn(number_inlier // 2, 2) - offset
         data_2 = 10 * np.random.randn(number_inlier // 2, 2) + offset
         inliers = np.r_[data_1, data_2]
-        outliers = np.random.uniform(low=-100, high=100, size=(number_outlier, 2))
+        outliers = np.random.uniform(low=-60, high=60, size=(number_outlier, 2))
         return inliers, outliers
