@@ -81,6 +81,13 @@ class Streamer:
         absolute_slide = int(absolute_size * slide)
         initial_index = 0
         final_index = absolute_size
+
+        if absolute_size == 0:
+            raise AttributeError("Window size is too small")
+
+        if absolute_slide == 0:
+            raise AttributeError("Slide is too small")
+
         while final_index <= len(data_stream):
             if len(data_stream) <= final_index + absolute_slide:
                 final_index = len(data_stream)

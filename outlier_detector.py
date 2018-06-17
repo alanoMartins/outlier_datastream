@@ -17,7 +17,7 @@ class AngularBasedOutlier(OutlierStream):
 
         OutlierStream.__init__(self, inliers, outliers)
         #self.model = KNN(contamination=0.045)
-        self.model = ABOD(n_neighbors=20, contamination=0.045)
+        self.model = ABOD(n_neighbors=20, contamination=0.2)
 
     def train_model(self, data):
         self.model.fit(data)
