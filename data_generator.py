@@ -18,7 +18,7 @@ class DataGenerator:
 
     def florest_Cover(self):
         path = "dataset/covtypeNorm.csv"
-        data = pd.read_csv(path, header=None).iloc[:50000, :]
+        data = pd.read_csv(path, header=None).iloc[:30000, :]
         cl2 = data.loc[data[54] == 2]
         cl4 = data.loc[data[54] == 4]
         cl2.drop(cl2.columns[54], axis=1, inplace=True)
@@ -28,10 +28,10 @@ class DataGenerator:
         return inliers.values, outliers.values
 
     def tao(self):
-        number_outlier = 10
+        number_outlier = 100
         path = "dataset/tao.csv"
-        data = pd.read_csv(path, header=None).iloc[:2000, :]
-        outliers = np.random.uniform(low=-60, high=60, size=(number_outlier, 4))
+        data = pd.read_csv(path, header=None).iloc[:10000, :]
+        outliers = np.random.uniform(low=80, high=160, size=(number_outlier, 4))
         return data.values, outliers
 
     def gauss(self):
